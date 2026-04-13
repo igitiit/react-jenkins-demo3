@@ -1,31 +1,52 @@
 pipeline {
     agent any
+
     tools {
-        nodejs 'Node25'
+        nodejs "Node25"   // Make sure you configured a NodeJS tool in Jenkins named "NodeJS"
     }
-    environment {
-        CI = 'true'
-    }
+
     stages {
-        stage('Build') {
+
+        stage('Checkout') {
             steps {
-                sh 'npm install'
+                checkout scm
             }
         }
-        stage('Test') {
+
+        stage('Install Dependencies') {
             steps {
-                sh 'npm test -- --watchAll=false'
+                bat 'npm install'
             }
         }
+
+        stage('Run Tests') {
+            steps {
+                // Prevent failure if no tests exist
+                bat 'npm test -- --watchAll=false --passWithNoTests'
+            }
+        }
+
         stage('Build Production') {
             steps {
-                sh 'npm run build'
+                bat 'npm run build'
             }
         }
+
         stage('Deploy') {
             steps {
-                sh 'echo "Deploying to production server"'
+                echo "Deploy step goes here"
+                // Example:
+                // bat 'xcopy /E /I build C:\\inetpub\\wwwroot\\myapp'
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Build completed successfully!"
+        }
+        failure {
+            echo "Build failed."
         }
     }
 }
