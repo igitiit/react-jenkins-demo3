@@ -1,30 +1,33 @@
 pipeline {
     agent any
+
     tools {
         nodejs 'Node25'
     }
+
     environment {
         CI = 'true'
     }
+
     stages {
         stage('Build') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
         stage('Test') {
             steps {
-                sh 'npm test -- --watchAll=false'
+                bat 'npm test -- --watchAll=false'
             }
         }
         stage('Build Production') {
             steps {
-                sh 'npm run build'
+                bat 'npm run build'
             }
         }
         stage('Deploy') {
             steps {
-                sh 'echo "Deploying to production server"'
+                bat 'echo Deploying to production server'
             }
         }
     }
